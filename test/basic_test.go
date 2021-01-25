@@ -1,10 +1,15 @@
 package main
 
 import (
-	"main/mathx/stats"
 	"math"
 	"testing"
+
+	"../mathx/stats"
 )
+
+func compareFloat(a float64, b float64, tolerance float64) bool {
+	return math.Abs(a-b) <= tolerance
+}
 
 func TestStatsCreate(t *testing.T) {
 	s := stats.New()
@@ -47,5 +52,14 @@ func TestStatsStdDev(t *testing.T) {
 	delta := math.Abs(popStdev - 1.633)
 	if delta > 0.0005 {
 		t.Errorf("expected: %f received: %f", 1.633, popStdev)
+	}
+}
+
+func TestStatsCI(t *testing.T) {
+	s := stats.New()
+	s.Add(25.0, 35.0, 10.0, 17.0, 29.0, 14.0, 21.0, 31.0)
+	ci := s.Ci95()
+	if !compareFloat(ci, 6.0723, 0.0001) {
+		t.Errorf("Confidence interval is %f", ci)
 	}
 }
